@@ -13,7 +13,7 @@ const Header = ({ darkMode, setDarkMode }: HeaderProps) => {
       <nav className="container mx-auto px-6 py-3">
         <div className="flex items-center justify-between">
           <div className="text-2xl font-bold text-gray-800 dark:text-white">
-            Your Name
+            Adipurna
           </div>
           
           <div className="hidden md:flex items-center space-x-8">
