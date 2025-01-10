@@ -7,11 +7,7 @@ const About = () => {
         </h2>
         <div className="max-w-3xl mx-auto text-center">
           <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-            I'm a passionate developer with experience in building web applications.
-            I love creating elegant solutions to complex problems and am always
-            eager to learn new technologies. When I'm not coding, you can find me
-            exploring new technologies, contributing to open-source projects, or
-            sharing knowledge with the developer community.
+            Versatile DevOps and Site Reliability Engineer with over 4 years of experience streamlining CI/CD pipelines, automating cloud infrastructure, and ensuring operational excellence in diverse environments. Proficient in Kubernetes application rollouts, containerization with Docker, and cloud platforms such as AWS, GCP, and Azure.
           </p>
         </div>
       </div>
