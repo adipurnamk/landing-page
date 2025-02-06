@@ -28,6 +28,15 @@ jobs:
       id: timestamp
       run: echo "TIMESTAMP=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
 
+    - name: Set image tag
+      id: set_image_tag
+      run: |
+        if [[ "${GITHUB_REF}" == "refs/heads/main" || "${GITHUB_REF}" == "refs/heads/stage" ]]; then
+          echo "IMAGE_TAG=${GITHUB_REF_NAME}-${{ env.TIMESTAMP }}" >> $GITHUB_ENV
+        else
+          echo "IMAGE_TAG=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+        fi
+
     # - name: Extract metadata (labels, tags) for Docker
     #   id: meta
     #   uses: docker/metadata-action@v4
@@ -60,18 +69,18 @@ jobs:
       with:
         context: .
         push: false # Do not push here, just build
-        tags: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/landing-page:${{ github.ref_name }}-${{ env.TIMESTAMP }}
+        tags: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/landing-page:${{ env.IMAGE_TAG }}
         # labels: ${{ steps.meta.outputs.labels }}
         load: true # Load the image into the local Docker daemon
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/landing-page:${{ github.ref_name }}-${{ env.TIMESTAMP }}
+        image-ref: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/landing-page:${{ env.IMAGE_TAG }}
         format: 'table'
         exit-code: 1
         ignore-unfixed: true
         severity: 'CRITICAL,HIGH'
 
     - name: Push Docker image
-      run: docker push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/landing-page:${{ github.ref_name }}-${{ env.TIMESTAMP }}
+      run: docker push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/landing-page:${{ env.IMAGE_TAG }}
