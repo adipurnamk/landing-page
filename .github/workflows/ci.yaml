@@ -24,25 +24,29 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
-    - name: Extract metadata (labels, tags) for Docker
-      id: meta
-      uses: docker/metadata-action@v4
-      with:
-        # Change this to your image name.  Ex: `docker.io/username/my-app`
-        images: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/landing-page
-        flavor: latest=true
+    - name: Get current timestamp
+      id: timestamp
+      run: echo "TIMESTAMP=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
 
-        # Generate tags for each branch
-        tags: |
-          main=main
-          stage=stage
-          # Use the tag name as the tag for the image
-          ${{ github.ref_name }}=${{ github.ref_name }}
+    # - name: Extract metadata (labels, tags) for Docker
+    #   id: meta
+    #   uses: docker/metadata-action@v4
+    #   with:
+    #     # Change this to your image name.  Ex: `docker.io/username/my-app`
+    #     images: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/landing-page
+    #     flavor: latest=true
 
-        # Generate image prefixes for each branch
-        prefixes: |
-          main=main-
-          stage=stage-
+    #     # Generate tags for each branch
+    #     tags: |
+    #       type=ref,event=branch
+    #       type=ref,event=pr
+    #       type=semver,pattern={{version}}
+    #       type=semver,pattern={{major}}.{{minor}}.{{patch}}
+          
+    #     # Generate image prefixes for each branch
+    #     prefixes: |
+    #       main=main-
+    #       stage=stage-
           
     # - name: Run tests
     #   run: |
@@ -56,18 +60,18 @@ jobs:
       with:
         context: .
         push: false # Do not push here, just build
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+        tags: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/landing-page:${{ github.ref_name }}-${{ env.TIMESTAMP }}
+        # labels: ${{ steps.meta.outputs.labels }}
         load: true # Load the image into the local Docker daemon
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/landing-page:${{ github.ref_name }}
+        image-ref: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/landing-page:${{ github.ref_name }}-${{ env.TIMESTAMP }}
         format: 'table'
         exit-code: 1
         ignore-unfixed: true
         severity: 'CRITICAL,HIGH'
 
     - name: Push Docker image
-      run: docker push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/landing-page:${{ github.ref_name }}
+      run: docker push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/landing-page:${{ github.ref_name }}-${{ env.TIMESTAMP }}
