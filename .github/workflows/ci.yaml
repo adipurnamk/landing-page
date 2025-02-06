@@ -3,9 +3,6 @@ name: Docker Image CI
 on:
   push:
     branches: [ "main", "stage" ]
-  
-  # Trigger workflow on tag push
-  push:
     tags:
       - v*.*.*
 
