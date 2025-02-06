@@ -45,6 +45,13 @@ jobs:
         prefixes: |
           main=main-
           stage=stage-
+          
+    - name: Run tests
+      run: |
+        # Install dependencies
+        npm install
+        # Run tests (assuming you have a test script in package.json)
+        npm test
 
     - name: Build Docker image
       uses: docker/build-push-action@v3
