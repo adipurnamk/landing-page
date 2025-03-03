@@ -67,6 +67,44 @@ docker run -p 8080:80 landing-page
 
 The site will be available at `http://localhost:8080`
 
+## Deploying with Helm on Minikube
+
+Follow these steps to deploy the application using Helm on Minikube:
+
+1. **Start Minikube:**
+
+   ```sh
+   minikube start
+   ```
+
+2. **Navigate to the Helm chart directory:**
+
+   ```sh
+   cd deployment/helm
+   ```
+
+3. **Install the Helm chart:**
+
+   ```sh
+   helm install landing-page .
+   ```
+
+4. **Verify the deployment:**
+
+   ```sh
+   kubectl get all
+   ```
+
+5. **Access the application:**
+
+   To access the application, you need to forward the port or use Minikube's service tunneling:
+
+   ```sh
+   minikube service landing-page
+   ```
+
+   This command will open the application in your default web browser.
+
 ## Project Structure
 
 ```
