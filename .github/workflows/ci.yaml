@@ -34,10 +34,15 @@ jobs:
     - name: Set image tag
       id: set_image_tag
       run: |
-        if [[ "${GITHUB_REF}" == "refs/heads/main" || "${GITHUB_REF}" == "refs/heads/stage" ]]; then
+        if [[ "${GITHUB_REF}" == refs/pull/* ]]; then
+          PR_NUMBER="${GITHUB_REF#refs/pull/}"
+          PR_NUMBER="${PR_NUMBER%%/*}"
+          echo "IMAGE_TAG=pr-${PR_NUMBER}" >> $GITHUB_ENV
+        elif [[ "${GITHUB_REF}" == "refs/heads/main" || "${GITHUB_REF}" == "refs/heads/stage" ]]; then
           echo "IMAGE_TAG=${GITHUB_REF_NAME}-${{ env.TIMESTAMP }}" >> $GITHUB_ENV
         else
-          echo "IMAGE_TAG=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+          SAFE_REF="${GITHUB_REF_NAME//\//-}"
+          echo "IMAGE_TAG=${SAFE_REF}" >> $GITHUB_ENV
         fi
 
     # - name: Extract metadata (labels, tags) for Docker
