@@ -67,6 +67,56 @@ docker run -p 8080:80 landing-page
 
 The site will be available at `http://localhost:8080`
 
+## Cloudflare Deployment
+
+You can deploy this site to Cloudflare using either **Cloudflare Workers** (to serve the `dist` assets via Wrangler) or **Cloudflare Pages** (static hosting). The repository already includes a `wrangler.json` that points `assets.directory` to `./dist`.
+
+Prerequisites:
+- Node.js and npm
+- Install the Wrangler CLI and authenticate with your Cloudflare account:
+
+```bash
+npm install -g wrangler
+wrangler login
+# or use npx: npx wrangler whoami
+```
+
+Build the production site (outputs `./dist`):
+
+```bash
+npm run build
+```
+
+Workers (serve `./dist` via Wrangler):
+
+```bash
+# build, then publish the Worker (uses assets.directory: ./dist)
+npm run build
+npx wrangler publish
+```
+
+Pages (publish static `./dist` to Cloudflare Pages):
+
+```bash
+# build, then publish to Pages (replace <project-name> with your Pages project)
+npm run build
+npx wrangler pages publish ./dist --project-name <project-name>
+```
+
+Optional npm scripts (also added to `package.json`):
+
+```bash
+# Publish using Wrangler (Worker)
+npm run deploy
+
+# Publish to Cloudflare Pages
+npm run pages-deploy
+```
+
+Notes:
+- If you need custom runtime logic, add a Worker entrypoint and update `wrangler.json` accordingly. The current config publishes static assets from `./dist`.
+- For CI/CD, consider adding a GitHub Actions workflow that runs `npm ci && npm run build && npx wrangler publish` on merges to `main`.
+
 ## Deploying with Helm on Minikube
 
 Follow these steps to deploy the application using Helm on Minikube:
